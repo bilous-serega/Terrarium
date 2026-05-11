@@ -37,18 +37,27 @@ void updateSensors()
     float humidity = dht.readHumidity();
 
     if (isnan(temperature) || isnan(humidity))
+{
+    if (millis() - climate.lastUpdate > 10000)
     {
         sensorValid = false;
-
-        Serial.println("DHT READ ERROR");
-
-        return;
+        climate.valid = false;
     }
+
+#if DEBUG_SENSORS
+    Serial.println("DHT READ ERROR");
+#endif
+
+    return;
+}
 
     climate.temperature = temperature;
     climate.humidity = humidity;
 
-    sensorValid = true;
+    climate.valid = true;
+    climate.lastUpdate = millis();
+
+        sensorValid = true;
 
     #if DEBUG_SENSORS
         Serial.print("TEMP: ");

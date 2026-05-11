@@ -12,7 +12,7 @@ static bool fogCycleActive = false;
 
 static unsigned long fogCycleStart = 0;
 
-static unsigned long fogLastRun = -7200000UL; //static unsigned long fogLastRun = 0;
+static unsigned long fogLastRun = 0;
 
 void handleLightScheduler()
 {
@@ -58,6 +58,13 @@ void handleFogScheduler()
         currentMinutes < endMinutes;
 
     unsigned long currentMillis = millis();
+
+    if (fogLastRun == 0)
+{
+    fogLastRun =
+        currentMillis -
+        (fogConfig.intervalHours * 3600000UL);
+}
 
     if (fogWindowActive)
     {
@@ -144,5 +151,3 @@ void handleAutomation()
 
     handleAuxScheduler();
 }
-
-

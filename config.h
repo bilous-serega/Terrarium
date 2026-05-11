@@ -7,3 +7,5 @@
 #define WIFI_RECONNECT_INTERVAL 10000
 
 #define RELAY_COUNT 4
+
+#define DEBUG_SENSORS false

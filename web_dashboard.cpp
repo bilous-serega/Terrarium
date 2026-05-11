@@ -51,6 +51,25 @@ String buildDashboardPage()
 
     html += "<br><br>";
 
+    html += "<h2>Climate</h2>";
+
+    html += "Sensor: ";
+    html += climate.valid ? "OK" : "ERROR";
+
+    html += "<br>";
+
+    html += "Temperature: ";
+    html += String(climate.temperature, 1);
+    html += " C";
+
+    html += "<br>";
+
+    html += "Humidity: ";
+    html += String(climate.humidity, 1);
+    html += " %";
+
+    html += "<br><br>";
+
     html += "<h2>Relays</h2>";
 
     for (int i = 0; i < 4; i++)
