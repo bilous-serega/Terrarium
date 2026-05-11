@@ -1,0 +1,9 @@
+#pragma once
+
+#define FW_VERSION "2.0.0-refactor"
+
+#define DISPLAY_UPDATE_INTERVAL 2000
+#define SENSOR_UPDATE_INTERVAL 3000
+#define WIFI_RECONNECT_INTERVAL 10000
+
+#define RELAY_COUNT 4
