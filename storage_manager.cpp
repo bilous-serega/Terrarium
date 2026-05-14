@@ -11,7 +11,29 @@ void initStorage()
 
 void loadSettings()
 {
-    // Reserved for future global settings
+    automationSettings.fanOnTemp =
+        preferences.getInt(
+            "fan_on",
+            28
+        );
+
+    automationSettings.fanOffTemp =
+        preferences.getInt(
+            "fan_off",
+            26
+        );
+
+    automationSettings.fogHumidityMin =
+        preferences.getInt(
+            "fog_hmin",
+            75
+        );
+
+    automationSettings.fogHumidityMax =
+        preferences.getInt(
+            "fog_hmax",
+            80
+        );
 }
 
 void restoreRelaySettings()
@@ -47,11 +69,31 @@ void saveSettings()
             relays[i].invert
         );
 
-        preferences.putBool(
+                preferences.putBool(
             keyAuto.c_str(),
             relays[i].autoMode
         );
     }
+
+    preferences.putInt(
+        "fan_on",
+        automationSettings.fanOnTemp
+    );
+
+    preferences.putInt(
+        "fan_off",
+        automationSettings.fanOffTemp
+    );
+
+    preferences.putInt(
+        "fog_hmin",
+        automationSettings.fogHumidityMin
+    );
+
+    preferences.putInt(
+        "fog_hmax",
+        automationSettings.fogHumidityMax
+    );
 }
 
 void saveConfigs()

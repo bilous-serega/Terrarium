@@ -105,6 +105,30 @@ String buildAutomationPage()
 
     html += "'><br><br>";
 
+    html += "Humidity MIN:<br>";
+
+    html += "<input type='number' ";
+    html += "name='hmin' ";
+    html += "min='0' ";
+    html += "max='100' ";
+    html += "value='";
+
+    html += String(automationSettings.fogHumidityMin, 0);
+
+    html += "'><br><br>";
+
+    html += "Humidity MAX:<br>";
+
+    html += "<input type='number' ";
+    html += "name='hmax' ";
+    html += "min='0' ";
+    html += "max='100' ";
+    html += "value='";
+
+    html += String(automationSettings.fogHumidityMax, 0);
+
+    html += "'><br><br>";
+
     html += "<input type='submit' value='SAVE'>";
 
     html += "</form><br>";
@@ -113,18 +137,70 @@ String buildAutomationPage()
 
     html += "<h2>FAN</h2>";
 
-    html += "Temperature automation planned<br><br>";
+    html += "<form action='/saveFan'>";
+
+    html += "ON Temperature:<br>";
+
+    html += "<input type='number' ";
+    html += "name='on' ";
+    html += "min='0' ";
+    html += "max='50' ";
+    html += "value='";
+
+    html += String(automationSettings.fanOnTemp, 1);
+
+    html += "'><br><br>";
+
+    html += "OFF Temperature:<br>";
+
+    html += "<input type='number' ";
+    html += "name='off' ";
+    html += "min='0' ";
+    html += "max='50' ";
+    html += "value='";
+
+    html += String(automationSettings.fanOffTemp, 1);
+
+    html += "'><br><br>";
+
+    html += "<input type='submit' value='SAVE'>";
+
+    html += "</form><br>";
 
     // AUX
 
     html += "<h2>AUX</h2>";
 
+    html += "<form action='/saveAux'>";
+
+    html += "ON Hour:<br>";
+
+    html += "<input type='number' ";
+    html += "name='on' ";
+    html += "min='0' ";
+    html += "max='23' ";
+    html += "value='";
+
     html += String(auxConfig.onHour);
-    html += ":00 -> ON<br>";
+
+    html += "'><br><br>";
+
+    html += "OFF Hour:<br>";
+
+    html += "<input type='number' ";
+    html += "name='off' ";
+    html += "min='0' ";
+    html += "max='23' ";
+    html += "value='";
 
     html += String(auxConfig.offHour);
-    html += ":00 -> OFF<br><br>";
 
+    html += "'><br><br>";
+
+    html += "<input type='submit' value='SAVE'>";
+
+    html += "</form><br>";
+    
     html += buildPageEnd();
 
     return html;

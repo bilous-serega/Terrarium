@@ -20,6 +20,8 @@ void initSensors()
 
     sensorValid = false;
 
+    climate.error = "INIT";
+
     climate.temperature = 0.0;
     climate.humidity = 0.0;
 
@@ -38,10 +40,12 @@ void updateSensors()
 
     if (isnan(temperature) || isnan(humidity))
 {
-    if (millis() - climate.lastUpdate > 10000)
+    if (millis() - climate.lastUpdate > SENSOR_TIMEOUT_MS)
     {
         sensorValid = false;
         climate.valid = false;
+        climate.error = "TIMEOUT";
+        warningState = WARNING_SENSOR_TIMEOUT;
     }
 
 #if DEBUG_SENSORS
@@ -55,6 +59,8 @@ void updateSensors()
     climate.humidity = humidity;
 
     climate.valid = true;
+    climate.error = "OK";
+    warningState = WARNING_NONE;
     climate.lastUpdate = millis();
 
         sensorValid = true;

@@ -3,6 +3,7 @@
 #include <Arduino.h>
 
 String buildNavigation();
+String buildSystemCard();
 String buildPageStart(const String& title);
 String buildPageEnd();
 

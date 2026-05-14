@@ -1,6 +1,7 @@
 #include "globals.h"
 #include "rtc_manager.h"
 #include "web_common.h"
+#include "automation.h"
 
 String buildDashboardPage()
 {
@@ -8,68 +9,34 @@ String buildDashboardPage()
 
     html += buildPageStart("Dashboard");
 
-    unsigned long seconds = millis() / 1000;
-
-    unsigned long hours = seconds / 3600;
-    unsigned long minutes = (seconds % 3600) / 60;
-    unsigned long secs = seconds % 60;
-
-    html += "<h2>System</h2>";
-
-    html += "Uptime: ";
-    html += String(hours);
-    html += "h ";
-
-    html += String(minutes);
-    html += "m ";
-
-    html += String(secs);
-    html += "s<br>";
-
-    html += "Free Heap: ";
-    html += String(ESP.getFreeHeap() / 1024);
-    html += " KB<br><br>";
-
     html += "<h1>Terrarium Controller</h1>";
 
     html += buildNavigation();
 
-    html += "<h2>RTC</h2>";
+    if (warningState != WARNING_NONE)
+{
+    html += "<h2>WARNING</h2>";
 
-    html += "Status: ";
-    html += isRTCValid() ? "OK" : "ERROR";
+    switch (warningState)
+    {
+        case WARNING_SENSOR_TIMEOUT:
+            html += "SENSOR TIMEOUT";
+            break;
 
-    html += "<br>";
+        case WARNING_RTC_ERROR:
+            html += "RTC ERROR";
+            break;
 
-    html += "Date: ";
-    html += getDateString();
-
-    html += "<br>";
-
-    html += "Time: ";
-    html += getTimeString();
-
-    html += "<br><br>";
-
-    html += "<h2>Climate</h2>";
-
-    html += "Sensor: ";
-    html += climate.valid ? "OK" : "ERROR";
-
-    html += "<br>";
-
-    html += "Temperature: ";
-    html += String(climate.temperature, 1);
-    html += " C";
-
-    html += "<br>";
-
-    html += "Humidity: ";
-    html += String(climate.humidity, 1);
-    html += " %";
+        default:
+            html += "UNKNOWN WARNING";
+            break;
+    }
 
     html += "<br><br>";
+}
 
+    html += "<div class='card'>";
+    
     html += "<h2>Relays</h2>";
 
     for (int i = 0; i < 4; i++)
@@ -80,15 +47,31 @@ String buildDashboardPage()
         html += relays[i].name;
         html += "</b><br>";
 
-        html += "State: ";
+        html += "<span class='badge ";
+
+        html += relays[i].state ?
+            "badge-on" :
+            "badge-off";
+
+        html += "'>";
+
         html += relayStateText(relays[i].state);
 
-        html += "<br>";
+        html += "</span>";
 
-        html += "Mode: ";
+        html += "<span class='badge ";
+
+        html += relays[i].autoMode ?
+            "badge-auto" :
+            "badge-manual";
+
+        html += "'>";
+
         html += relayModeText(relays[i].autoMode);
 
-        html += "<br>Source: ";
+        html += "</span>";
+
+        html += "<span class='badge badge-source'>";
 
     switch (relays[i].source)
 {
@@ -109,26 +92,52 @@ String buildDashboardPage()
             break;
 }
 
-        html += "<br><br>";
+        html += "</span>";
 
-        html += "<a href='/relay/on?id=";
-        html += i;
-        html += "'>ON</a> ";
+html += "<br>";
 
-        html += "<a href='/relay/off?id=";
-        html += i;
-        html += "'>OFF</a> ";
+html += "<span class='badge badge-source'>";
 
-        html += "<a href='/relay/mode?id=";
-        html += i;
-        html += "&value=auto'>AUTO</a> ";
+if (i == 0)
+{
+    html += isFogHumidityRequested() ?
+        "AUTOMATION ACTIVE" :
+        "AUTOMATION IDLE";
+}
+else if (i == 1)
+{
+    html += isFanTemperatureRequested() ?
+        "AUTOMATION ACTIVE" :
+        "AUTOMATION IDLE";
+}
+else
+{
+    switch (relays[i].source)
+    {
+        case SOURCE_MANUAL:
+            html += "MANUAL CONTROL";
+            break;
 
-        html += "<a href='/relay/mode?id=";
-        html += i;
-        html += "&value=manual'>MANUAL</a>";
+        case SOURCE_AUTOMATION:
+            html += "AUTOMATION CONTROL";
+            break;
 
-        html += "<br><br>";
+        case SOURCE_SYSTEM:
+            html += "SYSTEM CONTROL";
+            break;
+
+        case SOURCE_FAILSAFE:
+            html += "FAILSAFE CONTROL";
+            break;
     }
+}
+
+    html += "</span>";
+
+    html += "<br><br>";
+    }
+
+    html += "</div>";
 
     html += buildPageEnd();
 

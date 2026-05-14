@@ -4,11 +4,64 @@
 #include "relay_manager.h"
 
 #include "config_manager.h"
+#include "globals.h"
 
 static bool lightLastState = false;
 static bool auxLastState = false;
 
 static bool fogCycleActive = false;
+
+static bool fogHumidityRequest = false;
+
+static bool fanTemperatureRequest = false;
+
+void updateFogHumidityRequest()
+{
+    if (!climate.valid)
+    {
+        fogHumidityRequest = false;
+        return;
+    }
+
+    if (!fogHumidityRequest)
+    {
+        if (climate.humidity <= automationSettings.fogHumidityMin)
+        {
+            fogHumidityRequest = true;
+        }
+    }
+    else
+    {
+        if (climate.humidity >= automationSettings.fogHumidityMax)
+        {
+            fogHumidityRequest = false;
+        }
+    }
+}
+
+void updateFanTemperatureRequest()
+{
+    if (!climate.valid)
+    {
+        fanTemperatureRequest = false;
+        return;
+    }
+
+    if (!fanTemperatureRequest)
+    {
+        if (climate.temperature >= automationSettings.fanOnTemp)
+        {
+            fanTemperatureRequest = true;
+        }
+    }
+    else
+    {
+        if (climate.temperature <= automationSettings.fanOffTemp)
+        {
+            fanTemperatureRequest = false;
+        }
+    }
+}
 
 static unsigned long fogCycleStart = 0;
 
@@ -73,7 +126,10 @@ void handleFogScheduler()
             unsigned long intervalMs =
                 fogConfig.intervalHours * 3600000UL;
 
-            if (currentMillis - fogLastRun >= intervalMs)
+            if (
+                fogHumidityRequest &&
+                currentMillis - fogLastRun >= intervalMs
+                )
             {
                 setRelay(
                     0,
@@ -121,6 +177,18 @@ void handleFogScheduler()
     }
 }
 
+void handleFanControl()
+{
+    if (!getRelayAutoMode(1))
+        return;
+
+    setRelay(
+        1,
+        fanTemperatureRequest,
+        SOURCE_AUTOMATION
+    );
+}
+
 void handleAuxScheduler()
 {
     if (!isRTCValid())
@@ -143,11 +211,27 @@ void handleAuxScheduler()
     }
 }
 
+bool isFogHumidityRequested()
+{
+    return fogHumidityRequest;
+}
+
+bool isFanTemperatureRequested()
+{
+    return fanTemperatureRequest;
+}
+
 void handleAutomation()
 {
+    updateFogHumidityRequest();
+
+    updateFanTemperatureRequest();
+
     handleLightScheduler();
 
     handleFogScheduler();
+
+    handleFanControl();
 
     handleAuxScheduler();
 }

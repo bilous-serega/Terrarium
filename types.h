@@ -2,6 +2,13 @@
 
 #include <Arduino.h>
 
+enum WarningState
+{
+    WARNING_NONE,
+    WARNING_SENSOR_TIMEOUT,
+    WARNING_RTC_ERROR
+};
+
 enum RelaySource
 {
     SOURCE_MANUAL,
@@ -30,6 +37,7 @@ struct ClimateData
     float temperature = 0.0f;
     float humidity = 0.0f;
     bool valid = false;
+    String error;
     unsigned long lastUpdate = 0;
 };
 
@@ -38,6 +46,11 @@ struct AutomationSettings
     float fanOnTemp = 28.0f;
     float fanOffTemp = 26.0f;
 
+    float fogHumidityMin = 75.0f;
+    float fogHumidityMax = 80.0f;
+
     uint32_t fogInterval = 3600000;
     uint32_t fogDuration = 30000;
 };
+
+extern WarningState warningState;

@@ -102,6 +102,50 @@ static void handleSaveFog()
     fogConfig.durationSeconds =
         server.arg("duration").toInt();
 
+    automationSettings.fogHumidityMin =
+        server.arg("hmin").toInt();
+
+    automationSettings.fogHumidityMax =
+        server.arg("hmax").toInt();
+
+    saveConfigs();
+
+    saveSettings();
+
+    server.sendHeader(
+        "Location",
+        "/automation"
+    );
+
+    server.send(303);
+}
+
+static void handleSaveFan()
+{
+    automationSettings.fanOnTemp =
+        server.arg("on").toInt();
+
+    automationSettings.fanOffTemp =
+        server.arg("off").toInt();
+
+    saveSettings();
+
+    server.sendHeader(
+        "Location",
+        "/automation"
+    );
+
+    server.send(303);
+}
+
+static void handleSaveAux()
+{
+    auxConfig.onHour =
+        server.arg("on").toInt();
+
+    auxConfig.offHour =
+        server.arg("off").toInt();
+
     saveConfigs();
 
     server.sendHeader(
@@ -178,6 +222,16 @@ void initWebServer()
     server.on("/saveFog", []()
     {
         handleSaveFog();
+    });
+
+    server.on("/saveFan", []()
+    {
+    handleSaveFan();
+    });
+
+    server.on("/saveAux", []()
+    {
+    handleSaveAux();
     });
 
     server.begin();

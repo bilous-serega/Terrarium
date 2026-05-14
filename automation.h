@@ -6,3 +6,7 @@ void handleLightScheduler();
 void handleFogScheduler();
 
 void handleAuxScheduler();
+
+bool isFogHumidityRequested();
+
+bool isFanTemperatureRequested();

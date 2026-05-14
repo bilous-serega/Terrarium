@@ -5,6 +5,7 @@
 #include <time.h>
 
 #include "rtc_manager.h"
+#include "globals.h"
 
 RTC_DS3231 rtc;
 
@@ -16,11 +17,16 @@ void initRTC()
 {
     if (!rtc.begin())
     {
-        rtcValid = false;
-        return;
+    rtcValid = false;
+
+    warningState = WARNING_RTC_ERROR;
+
+    return;
     }
 
     rtcValid = true;
+
+    warningState = WARNING_NONE;
 
     if (rtc.lostPower())
     {
