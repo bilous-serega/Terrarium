@@ -45,7 +45,7 @@ String buildDashboardPage()
 
         html += "<b>";
         html += relays[i].name;
-        html += "</b><br>";
+        html += "</b><br><br>";
 
         html += "<span class='badge ";
 
@@ -71,51 +71,28 @@ String buildDashboardPage()
 
         html += "</span>";
 
+        html += "<br><br>"; //html += "<br>";
+
         html += "<span class='badge badge-source'>";
 
-    switch (relays[i].source)
-{
-        case SOURCE_MANUAL:
-            html += "MANUAL";
-            break;
-
-        case SOURCE_AUTOMATION:
-            html += "AUTOMATION";
-            break;
-
-        case SOURCE_SYSTEM:
-            html += "SYSTEM";
-            break;
-
-        case SOURCE_FAILSAFE:
-            html += "FAILSAFE";
-            break;
-}
-
-        html += "</span>";
-
-html += "<br>";
-
-html += "<span class='badge badge-source'>";
-
-if (i == 0)
-{
-    html += isFogHumidityRequested() ?
-        "AUTOMATION ACTIVE" :
-        "AUTOMATION IDLE";
-}
-else if (i == 1)
-{
-    html += isFanTemperatureRequested() ?
-        "AUTOMATION ACTIVE" :
-        "AUTOMATION IDLE";
-}
-else
-{
-    switch (relays[i].source)
+    if (i == 0)
     {
-        case SOURCE_MANUAL:
-            html += "MANUAL CONTROL";
+        html += isFogHumidityRequested() ?
+            "AUTOMATION ACTIVE" :
+            "AUTOMATION IDLE";
+    }
+    else if (i == 1)
+    {
+        html += isFanTemperatureRequested() ?
+            "AUTOMATION ACTIVE" :
+            "AUTOMATION IDLE";
+    }
+    else
+    {
+        switch (relays[i].source)
+        {
+            case SOURCE_MANUAL:
+                html += "MANUAL CONTROL";
             break;
 
         case SOURCE_AUTOMATION:
@@ -135,6 +112,25 @@ else
     html += "</span>";
 
     html += "<br><br>";
+
+    html += "<a class='btn btn-on' href='/relay/on?id=";
+    html += i;
+    html += "'>ON</a> ";
+
+    html += "<a class='btn btn-off' href='/relay/off?id=";
+    html += i;
+    html += "'>OFF</a> ";
+
+    html += "<a class='btn btn-auto' href='/relay/mode?id=";
+    html += i;
+    html += "&value=auto'>AUTO</a> ";
+
+    html += "<a class='btn btn-manual' href='/relay/mode?id=";
+    html += i;
+    html += "&value=manual'>MANUAL</a>";
+
+    html += "<br><br>";
+
     }
 
     html += "</div>";
